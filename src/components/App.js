@@ -1,28 +1,29 @@
 import React, { Component } from 'react'
-import styled from 'styled-components'
-import Header from 'components/shared/header';
-import 'fonts';
-
-const Root = styled.div`
-  padding: 0;
-  margin: 0;
-  overflow-x: hidden;
-  overflow-y: auto;
-  font-size: 16px;
-  font-family: Roboto, Helvetica, 'Helvetica Neue', Arial, sans-serif;
-`
-const Heading = styled.h1`
-  margin: 0;
-  font-weight: 900;
-  font-size: 2em;
-`
+import Main from './Main';
 
 export default class App extends Component {
+
+  state = {
+    contacts: [],
+  };
+
+  componentWillMount() {
+    fetch('https://api.randomuser.me/?nat=us&results=50')
+      .then(res => res.json())
+      .then(res => res.results.map(user => ({
+        name: `${user.name.first} ${user.name.last}`,
+        email: user.email,
+        thumbnail: user.picture.thumbnail,
+      })))
+      .then(contacts => this.setState({ contacts }));
+  }
+
   render() {
+    console.log(this.state.contacts);
     return (
-      <Root>
-        <Header></Header>
-      </Root>
+      <div className="app">
+        <Main contacts={this.state.contacts}/>
+      </div>
     );
   }
 }
